@@ -11,7 +11,8 @@
 //
 // If you no longer want to use a dependency, remember
 // to also remove its path from "config.paths.watched".
-import "phoenix_html"
+import "phoenix_html";
+//import "popper";
 
 // Import local files
 //
@@ -19,3 +20,26 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+import socket from "./socket";
+import run_demo from "./demo";
+import form_init from "./index";
+
+function init() {
+
+  let root = document.getElementById('root');
+  if(root) {
+    let channel =  socket.channel("games:" + window.gameName, {});
+    run_demo(root,channel);
+  }
+  let comp = document.getElementById('index-page');
+  console.log("hi");
+  if(comp) {
+
+    form_init(comp);
+  }
+
+
+}
+
+// Use jQuery to delay until page loaded.
+$(init);
