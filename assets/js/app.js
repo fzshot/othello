@@ -32,7 +32,7 @@ function init() {
     run_demo(root,channel);
   }
   let comp = document.getElementById('index-page');
-  console.log("hi");
+  
   if(comp) {
 
     form_init(comp);

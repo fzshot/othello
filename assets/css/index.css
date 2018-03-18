@@ -13,6 +13,7 @@ ol, ul {
   display: table;
   overflow:auto;
 
+
 }
 
 
@@ -34,6 +35,9 @@ ol, ul {
   text-align: center;
   width: 80px;
   overflow:auto;
+  margin-bottom: 10px;
+  background-color: #DEB887;
+
 }
 
 .square:focus {
@@ -48,8 +52,52 @@ ol, ul {
 .game {
   display: flex;
   flex-direction: row;
+  background-color: #DEB887;
+
 }
 
 .game-info {
   margin-left: 20px;
+}
+
+#box
+{
+    width:200px;
+    height:200px;
+    border-radius:50%;
+    background-color:red;
+}
+
+#circle {
+     width: 40px;
+     height: 40px;
+     background: black;
+     -moz-border-radius: 20px;
+     -webkit-border-radius: 20px;
+     border-radius: 20px;
+     position: relative;
+     top: 50%;
+     left: 20%;
+}
+#circlewhite {
+     width: 40px;
+     height: 40px;
+     background: white;
+     -moz-border-radius: 20px;
+     -webkit-border-radius: 20px;
+     border-radius: 20px;
+     position: relative;
+     top: 50%;
+     left: 20%;
+}
+#circleblack {
+     width: 40px;
+     height: 40px;
+     background: black;
+     -moz-border-radius: 20px;
+     -webkit-border-radius: 20px;
+     border-radius: 20px;
+     position: relative;
+     top: 50%;
+     left: 20%;
 }

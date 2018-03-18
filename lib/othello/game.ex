@@ -4,8 +4,8 @@ defmodule Othello.Game do
   def new do
     %{
       value: next_game(),
-      history: List.duplicate("", 16),
-      current: List.duplicate("", 16),
+      history: List.duplicate(0, 64),
+      current: List.duplicate(0, 64),
       firstClick: -1,
       secondClick: -1,
       stepNumber: 0,

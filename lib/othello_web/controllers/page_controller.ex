@@ -6,6 +6,8 @@ defmodule OthelloWeb.PageController do
   end
 
   def game(conn, params) do
+    IO.puts "sadasd"
     render conn, "game.html", game: params["game"]
+
   end
 end

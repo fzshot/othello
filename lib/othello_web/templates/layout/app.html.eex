@@ -9,6 +9,10 @@
 
     <title>Hello Othello!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+
+    <style type="text/css">
+    
+    </style>
   </head>
 
   <body>
