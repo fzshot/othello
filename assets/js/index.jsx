@@ -6,19 +6,21 @@ export default function form_init(root) {
 }
 
 class Form extends React.Component {
-    
 
     render() {
+        let margin = {margin: ".4rem"};
         return (
-            <div>
-                    <div>
-                        <input type="text"
-                            id="game-name" placeholder="Input Name of Game">
-                        </input>
-                    </div>
+            <div className="row justify-content-center">
+                <div className="col-auto">
+                    <input className= "form-control" type="text"
+                        id="game-name" placeholder="Input Name of Game">
+                    </input>
+                </div>
+                <div className="w-100"></div>
+                <div className="col-auto" style={margin}>
                     <Submit/>
+                </div>
             </div>
-
         );
     }
 }

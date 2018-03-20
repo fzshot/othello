@@ -4,8 +4,8 @@
     <script>
       window.gameName = "<%= @game %>";
     </script>
-    <divCen id="root">
+    <div id="root">
       <p>React app not loaded...</p>
-    </divCen>
+    </div>
   </div>
 </div>

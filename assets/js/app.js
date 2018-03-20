@@ -25,20 +25,19 @@ import run_demo from "./demo";
 import form_init from "./index";
 
 function init() {
-
-  let root = document.getElementById('root');
-  if(root) {
+    let root = document.getElementById('root');
+    if(root) {
     let channel =  socket.channel("games:" + window.gameName, {});
+        // channel.join()
+        //     .receive("ok", resp => {console.log("join ok"), resp});
     run_demo(root,channel);
-  }
-  let comp = document.getElementById('index-page');
-  
-  if(comp) {
+    }
 
-    form_init(comp);
-  }
+    let comp = document.getElementById('index-page');
 
-
+    if(comp) {
+        form_init(comp);
+    }
 }
 
 // Use jQuery to delay until page loaded.

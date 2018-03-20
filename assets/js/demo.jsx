@@ -25,31 +25,34 @@ class form extends React.Component {
 
 class Demo extends React.Component {
     constructor(props) {
-      super(props);
+        super(props);
 
-      this.channel = props.channel;
+        this.channel = props.channel;
 
-      this.state = {
-        current: Array(64).fill(0),
-        stepNumber: 0,
-        win: false,
-        turn: 1,
-      };
+        this.state = {
+            current: Array(64).fill(0),
+            stepNumber: 0,
+            win: false,
+            turn: "B",
+            player: "N",
+        };
 
-      // this.channel.join()
-      //   .receive("ok", this.gotView.bind(this))
-      //   .receive("error", resp => { console.log("Unable to join", resp) });
-
-
+        this.channel.join()
+            .receive("ok", this.gotView.bind(this))
+            .receive("error", resp => { console.log("Unable to join", resp); });
+        this.channel.on("update", this.gotView.bind(this));
+        let home = window.location.host;
+        this.channel.on("home", () => {
+            window.location.replace("localhost:4000");
+        });
     }
 
-    // gotView(view) {
-    //
-    //   console.log("New view", view);
-    //
-    //
-    //     this.setState(view.game.game1);
-    // }
+    gotView(view) {
+        console.log(view.game);
+        this.setState(view.game);
+    }
+
+
 
     // sendGuess(ev) {
     //     clearTimeout(this.state.ID);
@@ -85,59 +88,39 @@ class Demo extends React.Component {
     //
     // }
     handleClick(i) {
-
-      const current1 = this.state.current.slice();
-
-      current1[i] = current1[i] + 1;
-      console.log(current1);
-      //console.log(current1[i]);
-
-      this.setState({
-        current: current1,
-        turn: this.state.turn + 1,
-      });
+        let player = this.state.player;
+        let currentTurn = this.state.turn;
+        this.channel.push("place", {place: i, player: player, turn: currentTurn});
     }
 
     render() {
       const current = this.state.current;
 
       return (
-        <div className="game" >
-          <div className="game-board">
-            <Board
-              squares={current}
-
-              onClick={(i) => this.handleClick(i)}
-            />
-          </div>
+        <div className="row justify-content-center">
+            <div className="col-auto" >
+                <div className="game">
+                    <div className="game-board">
+                        <Board
+                            squares={current}
+                            onClick={(i) => this.handleClick(i)}
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
-
-
       );
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
 class Square extends React.Component {
 
   image(value) {
-    //return <div id="circlewhite"></div>;
     if (value == 0) {
       return "";
     }
-    else if(value == 1) {
+    else if(value == "B") {
       return <div id="circleblack"></div>;
     }
     else {
@@ -146,9 +129,6 @@ class Square extends React.Component {
 
 
   }
-
-
-
 
     render() {
       return (
@@ -186,12 +166,12 @@ class Board extends React.Component {
 
 
     render() {
-
-      return (
+        return (
         <div>
-          <div>{this.renderRowForOthello()}</div>
-
+            <div>
+                {this.renderRowForOthello()}
+            </div>
         </div>
         );
-  }
+    }
 }
