@@ -39,7 +39,7 @@ exports.config = {
     // Dependencies and current project directories to watch
     watched: ["static", "css", "js", "vendor"],
     // Where to compile files to
-    public: "../priv/static"
+    public: "../priv/static",
   },
 
   // Configure your plugins
@@ -49,12 +49,12 @@ exports.config = {
       ignore: [/vendor/],
       presets: ['env', 'react'],
     },
-      sass: {
-          options: {
-              includePath: ["node_modules/bootstrap/scss"],
-              precision: 8,
-          }
-      },
+    sass: {
+        options: {
+            includePaths: ["node_modules/bootstrap/scss"],
+            precision: 8,
+        }
+    }
   },
 
   modules: {

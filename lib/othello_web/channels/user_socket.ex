@@ -1,8 +1,11 @@
 defmodule OthelloWeb.UserSocket do
   use Phoenix.Socket
+  alias Othello.Presence
 
   ## Channels
   # channel "room:*", OthelloWeb.RoomChannel
+  channel "games:*", OthelloWeb.GamesChannel
+  channel "index:lobby", OthelloWeb.IndexChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
@@ -19,8 +22,11 @@ defmodule OthelloWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+
+  # Idea borrowed from: https://stackoverflow.com/questions/41735442/phoenix-framework-generate-random-string-using-the-controller
+  def connect(params, socket) do
+    rand = :crypto.strong_rand_bytes(32) |> Base.encode64 |> binary_part(0, 32)
+    {:ok, assign(socket, :user_id, rand)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
@@ -33,5 +39,6 @@ defmodule OthelloWeb.UserSocket do
   #     OthelloWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
-  def id(_socket), do: nil
+  # def id(_socket), do: nil
+  def id(socket), do: "user_socket:#{socket.assigns.user_id}"
 end
