@@ -22,4 +22,10 @@ defmodule Othello.GameBackup do
       Map.delete(state, name)
     end
   end
+
+  def getAll() do
+    Agent.get __MODULE__, fn state ->
+      Map.keys(state)
+    end
+  end
 end

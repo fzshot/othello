@@ -5,6 +5,7 @@ defmodule OthelloWeb.UserSocket do
   ## Channels
   # channel "room:*", OthelloWeb.RoomChannel
   channel "games:*", OthelloWeb.GamesChannel
+  channel "index:lobby", OthelloWeb.IndexChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
