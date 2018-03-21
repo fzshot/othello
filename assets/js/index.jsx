@@ -49,8 +49,9 @@ function GameList(props) {
                 <div className="card">
                     <div className="card-body">
                         <h5 className="card-title">
-                            {props.name}
+                            Game Name: {props.name}
                         </h5>
+                        <a href={"http://"+window.location.host+"/game/"+props.name} className="card-link"> Join Game</a>
                     </div>
                 </div>
             </div>
@@ -60,7 +61,7 @@ function GameList(props) {
     let cards = [];
     _.each(gamename, (name) => {
         cards.push(
-            <Card name={name}/>
+            <Card key={name} name={name}/>
         );
     });
     console.log(cards);

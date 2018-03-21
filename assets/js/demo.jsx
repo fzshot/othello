@@ -94,23 +94,67 @@ class Demo extends React.Component {
     }
 
     render() {
-      const current = this.state.current;
+        const current = this.state.current;
+        let player = "You are playing: ";
+        if (this.state.player == "B") {
+            player += "Black";
+        } else if (this.state.player == "W") {
+            player += "White";
+        } else {
+            player = "You are observer";
+        }
 
-      return (
-        <div className="row justify-content-center">
-            <div className="col-auto" >
-                <div className="game">
-                    <div className="game-board">
-                        <Board
-                            squares={current}
-                            onClick={(i) => this.handleClick(i)}
-                        />
+        return (
+            <div className="row justify-content-center">
+                <div className="col-auto">
+                    <h5>
+                        {player}
+                    </h5>
+                </div>
+                <div className="col-12">
+                    <Wait turn={this.state.turn} player={this.state.player}/>
+                </div>
+                <div className="col-auto" >
+                    <div className="game">
+                        <div className="game-board">
+                            <Board
+                                squares={current}
+                                onClick={(i) => this.handleClick(i)}
+                            />
+                        </div>
                     </div>
                 </div>
+                <div className="col-12">
+                </div>
             </div>
-        </div>
-      );
+        );
     }
+}
+
+function Wait(props) {
+    let style = {
+        visibility: "hidden",
+    }
+    if (props.player == "N") {
+        return null;
+    } else {
+        if (props.turn == props.player) {
+            return (
+                <div className="alert alert-success" role="alert"
+                style={{textAlign: "center"}}>
+                    Your Turn
+                </div>
+            );
+        } else {
+            return (
+                <div className="alert alert-primary" role="alert"
+                style={{textAlign: "center"}}>
+                    Waiting for response
+                </div>
+            );
+        }
+    }
+
 }
 
 

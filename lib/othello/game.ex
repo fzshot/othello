@@ -8,7 +8,7 @@ defmodule Othello.Game do
     r2 = row
     |> List.replace_at(3, "B")
     |> List.replace_at(4, "W")
-    display = List.duplicate(row, 8)
+    List.duplicate(row, 8)
     |> List.replace_at(3, r1)
     |> List.replace_at(4, r2)
     |> List.flatten
@@ -21,7 +21,7 @@ defmodule Othello.Game do
       stepNumber: 0,
       win: false,
       turn: "B",
-      player: "B",
+      need: "B",
     }
   end
 
@@ -34,16 +34,17 @@ defmodule Othello.Game do
         currentGame
       else
         newBoard = List.replace_at(board, place, turn)
-        newTurn = turn
         if turn == "B" do
-          newTurn = "W"
+          %{
+            current: newBoard,
+            turn: "W",
+          }
         else
-          newTurn = "B"
+          %{
+            current: newBoard,
+            turn: "B",
+          }
         end
-        %{
-          current: newBoard,
-          turn: newTurn,
-        }
       end
     end
   end
