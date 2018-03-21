@@ -3,19 +3,32 @@ defmodule OthelloWeb.GamesChannel do
 
   alias Othello.Game
   alias Othello.Presence
-  alias OthelloWeb.Endpoint
+
+  defp getSize(size) do
+    case size do
+      1 -> "W"
+      _ -> "N"
+    end
+
+  end
 
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       state = Othello.GameBackup.load(name)
       if state do
+        list = Presence.list(socket)
+        player = list
+        |> map_size
+        |> getSize
+        send(self(), :after_join)
+        state = Map.put(state, :player, player)
         socket = socket
         |> assign(:game, state)
         |> assign(:name, name)
-        send(self(), :after_join)
         {:ok, %{"join" => name, "game" => state}, socket}
       else
         game = Game.new()
+        |> Map.put(:player, "B")
         socket = socket
         |> assign(:game, game)
         |> assign(:name, name)
@@ -45,45 +58,6 @@ defmodule OthelloWeb.GamesChannel do
     Othello.GameBackup.save(name, newState)
     broadcast(socket, "update", %{"game" => newState})
     {:noreply, socket}
-
-    # game = Game.guess(socket.assigns[:game], i)
-    # IO.inspect(game)
-    # Memory.GameBackup.save(socket.assigns[:name], game)
-    # socket = assign(socket, :game, game)
-    # if s == true do
-    #   if Game.client_view(game).game1.hideOrnot == false do
-    #     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-    #   else
-    #     #discussed with ceng zeng
-    #     {:reply, {:hide, %{ "game" => Game.client_view(game)}}, socket}
-    #   end
-    #
-    #
-    # else
-    #   {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-
-    # if r == true do
-    #     game = Game.new()
-    #     Othello.GameBackup.save(socket.assigns[:name], game)
-    #     socket = assign(socket, :game, game)
-    #     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-    # else
-    #     game = Game.guess(socket.assigns[:game], i)
-    #     IO.inspect(game)
-    #     Othello.GameBackup.save(socket.assigns[:name], game)
-    #     socket = assign(socket, :game, game)
-    #     if s == true do
-    #       if Game.client_view(game).game1.hideOrnot == false do
-    #         {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-    #       else
-    #         #discussed with ceng zeng
-    #         {:reply, {:hide, %{ "game" => Game.client_view(game)}}, socket}
-    #       end
-    #     else
-    #       {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
-    #     end
-    # end
-
   end
 
   def handle_info(:after_join, socket) do
@@ -102,14 +76,13 @@ defmodule OthelloWeb.GamesChannel do
   end
 
   # Idea borrowed from: https://stackoverflow.com/questions/41552760/how-could-i-know-amount-of-connections-to-channel-in-phoenix
-  def terminate(param, socket) do
-    # id = socket.assigns[:user_id]
-    # Presence.untrack(socket, id)
-    # if Presence.list(socket) |> Enum.empty? do
-    #   broadcast(socket, "home", %{})
-    #   name = socket.assigns[:name]
-    #   Othello.GameBackup.remove(name)
-    # end
+  def terminate(_param, socket) do
+    id = socket.assigns[:user_id]
+    Presence.untrack(socket, id)
+    if Presence.list(socket) |> Enum.empty? do
+      name = socket.assigns[:name]
+      Othello.GameBackup.remove(name)
+    end
   end
 
   # Add authorization logic here as required.
