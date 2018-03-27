@@ -87,8 +87,7 @@ ol, ul {
      -webkit-border-radius: 20px;
      border-radius: 20px;
      position: relative;
-     top: 50%;
-     left: 20%;
+     left: 25%;
 }
 #circleblack {
      width: 40px;
@@ -98,6 +97,5 @@ ol, ul {
      -webkit-border-radius: 20px;
      border-radius: 20px;
      position: relative;
-     top: 50%;
-     left: 20%;
+     left: 25%;
 }
