@@ -16,7 +16,8 @@ defmodule OthelloWeb.GamesChannel do
     if authorized?(payload) do
       state = Othello.GameBackup.load(name)
       if state do
-        state = Map.put(state, :count, true)
+        count = state[:count]
+        state = Map.put(state, :count, count+1)
         Othello.GameBackup.save(name, state)
         if state[:win] do
           state = Map.put(state, :player, "N")
@@ -59,7 +60,7 @@ defmodule OthelloWeb.GamesChannel do
     |> Map.get(:player)
     currentGame = Othello.GameBackup.load(name)
     newState = Game.testPlace(currentGame, place, player, turn)
-    |> Map.put(:count, true)
+    |> Map.put(:count, currentGame[:count])
     socket = assign(socket, :game, newState)
     Othello.GameBackup.save(name, newState)
     broadcast(socket, "update", %{"game" => newState})
@@ -96,19 +97,22 @@ defmodule OthelloWeb.GamesChannel do
     |> Map.get(:metas)
     |> hd
     |> Map.get(:player)
-    if player != "N" do
-      if player == "B" do
-        player = "W"
-      else
-        player = "B"
+    game = Othello.GameBackup.load(name)
+    if !game[:win] do
+      if player != "N" do
+        if player == "B" do
+          player = "W"
+        else
+          player = "B"
+        end
+        newState = Othello.GameBackup.load(name)
+        |> Map.put(:win, true)
+        |> Map.put(:winner, player)
+        |> Map.delete(:player)
+        socket = assign(socket, :game, newState)
+        Othello.GameBackup.save(name, newState)
+        broadcast(socket, "left", %{"game" => newState})
       end
-      newState = Othello.GameBackup.load(name)
-      |> Map.put(:win, true)
-      |> Map.put(:winner, player)
-      |> Map.delete(:player)
-      socket = assign(socket, :game, newState)
-      Othello.GameBackup.save(name, newState)
-      broadcast(socket, "left", %{"game" => newState})
     end
     Presence.untrack(socket, id)
     if Presence.list(socket) |> Enum.empty? do

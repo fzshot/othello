@@ -21,7 +21,7 @@ defmodule Othello.Game do
       stepNumber: 0,
       win: false,
       turn: "B",
-      count: false,
+      count: 1,
     }
   end
 

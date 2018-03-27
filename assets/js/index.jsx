@@ -48,7 +48,7 @@ function GameList(props) {
         let status = "";
         if (props.win) {
             status = "Game Ended";
-        } else if (props.count) {
+        } else if (props.count >= 2) {
             status = "Game Started";
         } else {
             status = "Waiting for player";
