@@ -23,7 +23,6 @@ class Form extends React.Component {
 
     render() {
         let margin = {margin: ".4rem"};
-        console.log(this.state.gamelist);
         return (
             <div>
               <div className="row justify-content-center">
@@ -49,10 +48,10 @@ function GameList(props) {
         let status = "";
         if (props.win) {
             status = "Game Ended";
-        } else if (!props.count) {
-            status = "Waiting for player";
-        } else {
+        } else if (props.count) {
             status = "Game Started";
+        } else {
+            status = "Waiting for player";
         }
         return (
             <div className="col-4">
@@ -75,7 +74,6 @@ function GameList(props) {
             <Card key={game.name} name={game.name} win={game.win} count={game.count} />
         );
     });
-    console.log(cards);
     return (
         <div className="row">
             {cards}

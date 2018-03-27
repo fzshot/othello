@@ -28,7 +28,6 @@ function init() {
     let root = document.getElementById('root');
     if(root) {
         let channel =  socket.channel("games:" + window.gameName, {});
-        console.log(channel);
         run_demo(root,channel);
     }
 

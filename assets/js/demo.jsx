@@ -46,7 +46,6 @@ class Demo extends React.Component {
     }
 
     gotView(view) {
-        console.log(view.game);
         this.setState(view.game);
     }
 
