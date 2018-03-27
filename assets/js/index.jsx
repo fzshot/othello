@@ -25,18 +25,20 @@ class Form extends React.Component {
         let margin = {margin: ".4rem"};
         console.log(this.state.gamelist);
         return (
-            <div className="row justify-content-center">
-                <div className="col-auto">
-                    <input className= "form-control" type="text"
-                        id="game-name" placeholder="Input Name of Game">
-                    </input>
-                </div>
-                <div className="w-100"></div>
-                <div className="col-auto" style={margin}>
-                    <Submit/>
-                </div>
-                <div className="w-100"></div>
-                <GameList gamelist={this.state.gamelist}/>
+            <div>
+              <div className="row justify-content-center">
+                  <div className="col-auto">
+                      <input className= "form-control" type="text"
+                          id="game-name" placeholder="Input Name of Game">
+                      </input>
+                  </div>
+                  <div className="w-100"></div>
+                  <div className="col-auto" style={margin}>
+                      <Submit/>
+                  </div>
+                  <div className="w-100"></div>
+              </div>
+              <GameList gamelist={this.state.gamelist}/>
             </div>
         );
     }
@@ -44,6 +46,14 @@ class Form extends React.Component {
 
 function GameList(props) {
     function Card(props) {
+        let status = "";
+        if (props.win) {
+            status = "Game Ended";
+        } else if (!props.count) {
+            status = "Waiting for player";
+        } else {
+            status = "Game Started";
+        }
         return (
             <div className="col-4">
                 <div className="card">
@@ -51,21 +61,26 @@ function GameList(props) {
                         <h5 className="card-title">
                             Game Name: {props.name}
                         </h5>
+                        <p className="card-text">{status}</p>
                         <a href={"http://"+window.location.host+"/game/"+props.name} className="card-link"> Join Game</a>
                     </div>
                 </div>
             </div>
         );
     }
-    let gamename = props.gamelist;
+    let games = props.gamelist;
     let cards = [];
-    _.each(gamename, (name) => {
+    _.each(games, (game) => {
         cards.push(
-            <Card key={name} name={name}/>
+            <Card key={game.name} name={game.name} win={game.win} count={game.count} />
         );
     });
     console.log(cards);
-    return cards;
+    return (
+        <div className="row">
+            {cards}
+        </div>
+    );
 }
 
 function Submit() {

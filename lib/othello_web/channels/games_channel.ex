@@ -16,12 +16,18 @@ defmodule OthelloWeb.GamesChannel do
     if authorized?(payload) do
       state = Othello.GameBackup.load(name)
       if state do
-        list = Presence.list(socket)
-        player = list
-        |> map_size
-        |> getSize
+        state = Map.put(state, :count, true)
+        Othello.GameBackup.save(name, state)
+        if state[:win] do
+          state = Map.put(state, :player, "N")
+        else
+          list = Presence.list(socket)
+          player = list
+          |> map_size
+          |> getSize
+          state = Map.put(state, :player, player)
+        end
         send(self(), :after_join)
-        state = Map.put(state, :player, player)
         socket = socket
         |> assign(:game, state)
         |> assign(:name, name)
@@ -63,24 +69,49 @@ defmodule OthelloWeb.GamesChannel do
   def handle_info(:after_join, socket) do
     list = Presence.list(socket)
     push socket, "presence_state", list
-    size = map_size(list)
-    case size do
-      0 ->
-        {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "B"})
-      1 ->
-        {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "W"})
-      _ ->
-        {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "N"})
+    name = socket.assigns[:name]
+    currentGame = Othello.GameBackup.load(name)
+    if currentGame[:win] do
+      {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "N"})
+    else
+      size = map_size(list)
+      case size do
+        0 ->
+          {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "B"})
+        1 ->
+          {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "W"})
+        _ ->
+          {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{player: "N"})
+      end
     end
     {:noreply, socket}
   end
 
   # Idea borrowed from: https://stackoverflow.com/questions/41552760/how-could-i-know-amount-of-connections-to-channel-in-phoenix
   def terminate(_param, socket) do
+    name = socket.assigns[:name]
     id = socket.assigns[:user_id]
+    player = Presence.list(socket)
+    |> Map.get(id)
+    |> Map.get(:metas)
+    |> hd
+    |> Map.get(:player)
+    if player != "N" do
+      if player == "B" do
+        player = "W"
+      else
+        player = "B"
+      end
+      newState = Othello.GameBackup.load(name)
+      |> Map.put(:win, true)
+      |> Map.put(:winner, player)
+      |> Map.delete(:player)
+      socket = assign(socket, :game, newState)
+      Othello.GameBackup.save(name, newState)
+      broadcast(socket, "left", %{"game" => newState})
+    end
     Presence.untrack(socket, id)
     if Presence.list(socket) |> Enum.empty? do
-      name = socket.assigns[:name]
       Othello.GameBackup.remove(name)
     end
   end

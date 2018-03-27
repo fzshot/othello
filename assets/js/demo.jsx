@@ -32,6 +32,7 @@ class Demo extends React.Component {
         this.state = {
             current: Array(64).fill(0),
             stepNumber: 0,
+            winner: "",
             win: false,
             turn: "B",
             player: "N",
@@ -41,10 +42,7 @@ class Demo extends React.Component {
             .receive("ok", this.gotView.bind(this))
             .receive("error", resp => { console.log("Unable to join", resp); });
         this.channel.on("update", this.gotView.bind(this));
-        let home = window.location.host;
-        this.channel.on("home", () => {
-            window.location.replace("localhost:4000");
-        });
+        this.channel.on("left", this.gotView.bind(this));
     }
 
     gotView(view) {
@@ -52,41 +50,6 @@ class Demo extends React.Component {
         this.setState(view.game);
     }
 
-
-
-    // sendGuess(ev) {
-    //     clearTimeout(this.state.ID);
-    //     if(this.state.firstClick != -1 && this.state.secondClick == -1) {
-    //       this.channel.push("guess", { place : ev, status : true, reset : false})
-    //       .receive("ok", this.gotView.bind(this))
-    //       .receive("hide", (resp) => {
-    //                        // this.setState({allow: 0});
-    //                        //this.gotView(resp);
-    //                        //this.clear();
-    //                        this.setState(resp.game.game1);
-    //                        // this.setState({check: -1})
-    //                        //discussed with chengzeng
-    //                        this.state.ID = setTimeout(() => {
-    //                            this.autoHid(resp)
-    //                            //this.setState({allow: 1 })
-    //                        }, 1000);
-    //                    });
-    //     }
-    //     else {
-    //       this.channel.push("guess", { place : ev, status : false, reset : false})
-    //       .receive("ok", this.gotView.bind(this));
-    //     }
-    //
-    //
-    //
-    // }
-
-
-    // reset() {
-    //   this.channel.push("guess", { place : 0, status : false, reset : true})
-    //   .receive("ok", this.gotView.bind(this))
-    //
-    // }
     handleClick(i) {
         let player = this.state.player;
         let currentTurn = this.state.turn;
@@ -104,6 +67,12 @@ class Demo extends React.Component {
             player = "You are observer";
         }
 
+        let status = <Wait turn={this.state.turn} player={this.state.player} />
+
+        if (this.state.win) {
+            status = <Win winner={this.state.winner} />
+        }
+
         return (
             <div className="row justify-content-center">
                 <div className="col-auto">
@@ -112,7 +81,7 @@ class Demo extends React.Component {
                     </h5>
                 </div>
                 <div className="col-12">
-                    <Wait turn={this.state.turn} player={this.state.player}/>
+                    {status}
                 </div>
                 <div className="col-auto" >
                     <div className="game">
@@ -129,6 +98,25 @@ class Demo extends React.Component {
             </div>
         );
     }
+}
+
+
+function Win(props) {
+    let win = props.winner;
+    let state = "";
+    if (win == "B") {
+        state = "Black Player wins the game!";
+    } else if (win == "W") {
+        state = "White Player wins the game!";
+    } else {
+        state = "The game ended in a draw.";
+    }
+    return (
+        <div className="alert alert-success" role="alert"
+        style={{textAlign: "center"}}>
+            {state}
+        </div>
+    );
 }
 
 function Wait(props) {
