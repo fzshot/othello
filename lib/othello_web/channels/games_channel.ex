@@ -59,6 +59,7 @@ defmodule OthelloWeb.GamesChannel do
     |> Map.get(:player)
     currentGame = Othello.GameBackup.load(name)
     newState = Game.testPlace(currentGame, place, player, turn)
+    |> Map.put(:count, true)
     socket = assign(socket, :game, newState)
     Othello.GameBackup.save(name, newState)
     broadcast(socket, "update", %{"game" => newState})
