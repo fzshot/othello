@@ -57,7 +57,6 @@ defmodule OthelloWeb.GamesChannel do
     |> Map.get(:metas)
     |> hd
     |> Map.get(:player)
-    IO.inspect(player)
     currentGame = Othello.GameBackup.load(name)
     newState = Game.testPlace(currentGame, place, player, turn)
     socket = assign(socket, :game, newState)

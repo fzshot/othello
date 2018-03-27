@@ -415,7 +415,6 @@ defmodule Othello.Game do
 
   defp flipDia(board, place, turn) do
     if testDia(board, place, turn) do
-      IO.inspect("testDia ok")
       row = div(place, 8)
       col = rem(place, 8)
       tempBoard = Enum.chunk_every(board, 8)
@@ -423,12 +422,10 @@ defmodule Othello.Game do
       right = testRDia(tempBoard, row, col, turn)
       newBoard = board
       if left do
-        IO.inspect("left ok")
         newBoard = replaceLDiaU(newBoard, row-1, col-1, turn)
         |> replaceLDiaD(row+1, col+1, turn)
       end
       if right do
-        IO.inspect("right ok")
         newBoard = replaceRDiaU(newBoard, row-1, col+1, turn)
         |> replaceRDiaD(row+1, col-1, turn)
       end
@@ -475,12 +472,12 @@ defmodule Othello.Game do
     board = currentGame[:current]
     win = currentGame[:win]
     if player != turn or Enum.at(board, place) != "" or win do
-      currentGame
+      %{
+        current: board
+      }
     else
       if isLegalMove(board, place, turn) do
-        IO.inspect("legalmove ok")
         newBoard = flip(board, place, turn)
-        IO.inspect("flip ok")
         newTurn =
           if turn == "W" do
             "B"
@@ -503,7 +500,9 @@ defmodule Othello.Game do
           end
         end
       else
-        currentGame
+        %{
+          current: board
+        }
       end
     end
   end
